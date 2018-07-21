@@ -3,16 +3,18 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { SceneComponent } from "./scene/scene.component";
-
+import { SocketComponent } from "./socket/socket.component";
+import { SocketService } from "./socket/socket.service";
 @NgModule({
   declarations: [
     AppComponent,
-    SceneComponent
+    SceneComponent,
+    SocketComponent
   ],
   imports: [
     BrowserModule
   ],
-  providers: [],
+  providers: [SocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
