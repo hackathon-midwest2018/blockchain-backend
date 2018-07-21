@@ -47,6 +47,15 @@ function onMessage(data) {
   data = JSON.parse(data)
   let newBlockHash = _.get(data, 'params.result.hash', false)
   let newTransactions = _.get(data, 'result.transactions', false)
+
+  let pendingTrans = {
+    method: 'parity_pendingTransactions',
+    params:[],
+    id :1,
+    jsonrpc: "2.0"
+  }
+  ws.send(JSON.stringify(pendingTrans))
+
   if (newBlockHash) {
     broadcast('block', data.params.result)
     let newBlock = {
