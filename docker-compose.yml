@@ -1,0 +1,22 @@
+version: '2.1'
+services:
+  web:
+    build: ./blockchain-backend
+    command: npm start
+    volumes:
+      - ./blockchain-backend:/build
+      - /build/node_modules
+    ports:
+      - "2998:2998"
+      - "9229:9229"
+    environment:
+      DEBUG: "${DEBUG}"
+      PORT: 2998
+  frontend:
+    build: ./blockchain-frontend
+    command: npm start
+    volumes:
+      - ./blockchain-frontend:/build
+      - /build/node_modules
+    ports:
+      - "4200:4200"

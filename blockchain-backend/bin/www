@@ -1,0 +1,73 @@
+#!/usr/bin/env node --inspect
+
+/**
+ * Module dependencies.
+ */
+
+const app = require('../app')
+const async = require('async')
+const debug = require('debug')('chain:server')
+const http = require('http')
+const { setupSockets } = require('../services/socket')
+const chain = require('../services/chain')
+const coinbase = require('../services/coinbase-price')
+
+async.series([startServer, chain.connect, coinbase.connect], (error, results) => {
+  if (error) {
+    if (error.syscall !== 'listen') {
+      throw error
+    }
+
+    let bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+      case 'EACCES':
+        console.error(bind + ' requires elevated privileges')
+        process.exit(1)
+        break
+      case 'EADDRINUSE':
+        console.error(bind + ' is already in use')
+        process.exit(1)
+        break
+      default:
+        throw error
+    }
+  }
+
+  console.log('Server is listening.')
+})
+
+function startServer(cb) {
+  const port = normalizePort(process.env.PORT || '2999')
+
+  app.set('port', port)
+
+  const server = http.createServer(app)
+  setupSockets(server)
+  server.listen(port)
+  server.on('error', cb)
+  server.on('listening', () => cb())
+}
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  let port = parseInt(val, 10)
+
+  if (isNaN(port)) {
+    // named pipe
+    return val
+  }
+
+  if (port >= 0) {
+    // port number
+    return port
+  }
+
+  return false
+}
+
+process.on('SIGINT', process.exit)
