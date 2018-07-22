@@ -9,16 +9,6 @@ const headers = {
 
 const NODE_URL = 'wss://terribly-cuddly-starfish.quiknode.io/'
 
-let toEth = (hex) => {
-  if (!hex) return
-  return parseInt(hex, 16) / 1000000000000000000
-}
-
-let toGwei = (hex) => {
-  if (!hex) return
-  return parseInt(hex, 16) / 1000000000
-}
-
 let ws
 
 function connect(cb) {
@@ -50,9 +40,9 @@ function onMessage(data) {
 
   let pendingTrans = {
     method: 'parity_pendingTransactions',
-    params:[],
-    id :1,
-    jsonrpc: "2.0"
+    params: [],
+    id: 1,
+    jsonrpc: '2.0'
   }
   ws.send(JSON.stringify(pendingTrans))
 
@@ -78,6 +68,16 @@ function onMessage(data) {
 
     broadcast('blockTransactions', mappedTransactions)
   }
+}
+
+function toEth(hex) {
+  if (!hex) return
+  return parseInt(hex, 16) / 1000000000000000000
+}
+
+function toGwei(hex) {
+  if (!hex) return
+  return parseInt(hex, 16) / 1000000000
 }
 
 module.exports = {

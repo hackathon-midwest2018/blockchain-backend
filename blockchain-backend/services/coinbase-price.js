@@ -5,7 +5,7 @@ const COINBASE_WS_URL = 'wss://ws-feed.pro.coinbase.com'
 let ws
 let opened = false
 
-let PRICE_CACHE = {}
+let priceCache = {}
 
 function connect(cb) {
   console.log('connect coinbase')
@@ -28,7 +28,6 @@ function connect(cb) {
 
   ws.on('message', function incoming(message) {
     let data = JSON.parse(message)
-    console.log('coinbase message', message)
 
     if (data.type === 'ticker') return onData(data)
   })
@@ -48,8 +47,7 @@ function connect(cb) {
 }
 
 function onData(data) {
-  console.log('on data', data)
-  PRICE_CACHE[data.product_id] = data.price
+  priceCache[data.product_id] = data.price
 }
 
 function close() {
@@ -62,7 +60,7 @@ function close() {
 function getPrice(fromAsset = 'ETH', toAsset = 'USD') {
   fromAsset = fromAsset.toUpperCase()
   toAsset = toAsset.toUpperCase()
-  return PRICE_CACHE[`${fromAsset}-${toAsset}`] || ''
+  return priceCache[`${fromAsset}-${toAsset}`] || ''
 }
 
 module.exports = {
