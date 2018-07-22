@@ -4,6 +4,7 @@ import "./js/EnableThreeExamples";
 import "three/examples/js/controls/OrbitControls";
 import "three/examples/js/loaders/ColladaLoader";
 import "three/examples/js/loaders/ColladaLoader";
+import { SocketService } from '../socket/socket.service';
 
 @Component({
     selector: 'scene',
@@ -28,10 +29,15 @@ export class SceneComponent implements AfterViewInit {
     @ViewChild('canvas')
     private canvasRef: ElementRef;
 
-    constructor() {
+    constructor(private socketService: SocketService) {
         this.render = this.render.bind(this);
         this.onModelLoadingCompleted = this.onModelLoadingCompleted.bind(this);
     }
+
+    private initIoConnection(): void {
+        this.socketService.onMessage().subscribe( chainData => console.log(chainData) );
+        this.socketService.initSocket();
+      }
 
     private get canvas(): HTMLCanvasElement {
         return this.canvasRef.nativeElement;
@@ -201,6 +207,7 @@ export class SceneComponent implements AfterViewInit {
         this.createGrid();
         this.startRendering();
         this.addControls();
+        this.initIoConnection();
     }
 
 }
