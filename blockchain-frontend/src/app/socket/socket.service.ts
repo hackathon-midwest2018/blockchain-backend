@@ -1,18 +1,29 @@
 import { Injectable } from '@angular/core';
 const SERVER_URL = 'ws://localhost:2998';
+import { Observable, of, Observer } from 'rxjs';
 
 @Injectable()
 export class SocketService {
     private socket;
+    public obs;
+    public observer: Observable<any>;
+
+    // constructor(){
+    //     this.socket = null;
+    //     this.obs = null;
+    // }
     
-    public initSocket(): void {
-        // this.socket = socketIo(SERVER_URL);
+
+    initSocket() {
         this.socket = new WebSocket(SERVER_URL);
+        // this.onMessage();
+        this.socket.onmessage = (event) => {
+            this.obs.next(JSON.parse(event.data));
+        };       
     }
 
-    public onMessage(){
-        this.socket.onmessage('message', (data: any) => {
-            console.log(data);
-        });
+    onMessage(){
+        return new Observable((observer) => this.obs = observer )
+    
     }
 }

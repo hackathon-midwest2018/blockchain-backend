@@ -3,13 +3,13 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { SceneComponent } from "./scene/scene.component";
-import { SocketComponent } from "./socket/socket.component";
+import { StagingArea } from "./stagingArea/stagingArea.component";
 import { SocketService } from "./socket/socket.service";
 @NgModule({
   declarations: [
     AppComponent,
     SceneComponent,
-    SocketComponent
+    StagingArea
   ],
   imports: [
     BrowserModule
