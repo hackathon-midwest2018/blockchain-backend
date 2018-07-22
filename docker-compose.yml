@@ -20,3 +20,4 @@ services:
       - /build/node_modules
     ports:
       - "4200:4200"
+      - "49153:49153"
