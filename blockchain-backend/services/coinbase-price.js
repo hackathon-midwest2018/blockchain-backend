@@ -33,13 +33,13 @@ function connect(cb) {
   })
 
   ws.on('error', function wsError(err) {
-    console.log('WEBSOCKET ERROR', err, exchange)
+    console.log('WEBSOCKET ERROR', err)
     opened = false
     ws = null
   })
 
   ws.on('close', function wsClose() {
-    console.log('WEBSOCKET CLOSED', exchange)
+    console.log('WEBSOCKET CLOSED')
     opened = false
     ws = null
     onClose()
