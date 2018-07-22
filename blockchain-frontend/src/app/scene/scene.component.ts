@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild, HostListener } from '@angular/core';
+  import { AfterViewInit, Component, ElementRef, Input, ViewChild, HostListener } from '@angular/core';
 import * as THREE from 'three';
 import "./js/EnableThreeExamples";
 import "three/examples/js/controls/OrbitControls";
@@ -16,7 +16,6 @@ export class SceneComponent implements AfterViewInit {
     private camera: THREE.PerspectiveCamera;
     private cameraTarget: THREE.Vector3;
     private clock: THREE.Clock;
-    private mixer: THREE.AnimationMixer;
     public scene: THREE.Scene;
 
     public fieldOfView: number = 60;
@@ -41,7 +40,7 @@ export class SceneComponent implements AfterViewInit {
         this.scene = new THREE.Scene();
         // this.scene.add(new THREE.AxisHelper(200));
         var loader = new THREE.ObjectLoader();
-        loader.load('assets/model/psc-warrior.json', this.onModelLoadingCompleted);
+        // loader.load('assets/model/translucent-3-dae/translucent-3.json', this.onModelLoadingCompleted);
     }
 
     private onModelLoadingCompleted(collada) {
@@ -49,14 +48,14 @@ export class SceneComponent implements AfterViewInit {
         console.log('collada: ', collada)
         // console.log('model: ', modelScene)
         this.scene.add(collada);
-        var sceneAnimationClip = collada.animations[0];
+        // var sceneAnimationClip = collada.animations[0];
 
          // Create animation mixer and pass object to it
-         this.mixer = new THREE.AnimationMixer(collada);
+         // this.mixer = new THREE.AnimationMixer(collada);
 
          // Create animation action and start it
-         var sceneAnimation = this.mixer.clipAction(sceneAnimationClip);
-         sceneAnimation.play();
+         // var sceneAnimation = this.mixer.clipAction(sceneAnimationClip);
+         // sceneAnimation.play();
         this.render();
     }
 
@@ -68,6 +67,18 @@ export class SceneComponent implements AfterViewInit {
         var light = new THREE.PointLight(0xffffff, 1, 1000);
         light.position.set(0, 0, -100);
         this.scene.add(light);
+    }
+
+    private buildGibson(x,y,z) {
+      this.backgroundTexture = new THREE.TextureLoader().load( 'assets/textures/gibson.jpg' );
+      this.backgroundTexture.wrapS = THREE.RepeatWrapping;
+      this.backgroundTexture.wrapT = THREE.RepeatWrapping;
+      console.log('back:' , this.backgroundTexture)
+			var geometry = new THREE.BoxBufferGeometry( 200, 400, 200 );
+			var material = new THREE.MeshBasicMaterial( { map: this.backgroundTexture } );
+			this.gibson = new THREE.Mesh( geometry, material );
+      this.gibson.position.set(x,y,z);
+			this.scene.add( this.gibson );
     }
 
     private createGrid() {
@@ -88,8 +99,8 @@ export class SceneComponent implements AfterViewInit {
         );
 
         // Set position and look at
-        this.camera.position.x = 10;
-        this.camera.position.y = 10;
+        this.camera.position.x = 250;
+        this.camera.position.y = 250;
         this.camera.position.z = 5;
     }
 
@@ -118,14 +129,24 @@ export class SceneComponent implements AfterViewInit {
         this.clock = new THREE.Clock();
 
         (function render() {
-            requestAnimationFrame(render);
-            component.render();
-        }.bind(this));
+          requestAnimationFrame(render);
+          // terrain.animate();
+          // plane.animate();
+          // clouds.animate();
+          component.backgroundTexture.offset.set(component.backgroundTexture.offset.x -= 0.005,0);
+          component.renderer.render(component.scene, component.camera);
+        }());
+
+        // (function render() {
+        //     requestAnimationFrame(render);
+        //     component.render();
+        // }.bind(this));
     }
 
     public render() {
         let delta = this.clock.getDelta();
-        this.mixer.update( delta );
+        // this.mixer.update( delta );
+        this.backgroundTexture.offset.set(this.backgroundTexture.offset.x -= 0.0005,0);
         this.renderer.render(this.scene, this.camera);
     }
 
@@ -199,6 +220,8 @@ export class SceneComponent implements AfterViewInit {
         this.createLight();
         this.createCamera();
         this.createGrid();
+        this.buildGibson(0,0,0);
+        this.buildGibson(500,500,500);
         this.startRendering();
         this.addControls();
     }
